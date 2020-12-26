@@ -2,12 +2,16 @@
 
 namespace App\Exceptions;
 
+use App\Traits\ApiResponser;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponser;
     /**
      * A list of the exception types that are not reported.
      *
@@ -34,14 +38,23 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $notFound = ['message' => 'Resource not found'];
+        $notFoundMsg = 'Resource not found';
 
-        $this->renderable(function (ModelNotFoundException $e, $request) use ($notFound) {
-            return response()->json($notFound, 404);
+        $this->renderable(function (ModelNotFoundException $e, $request) use ($notFoundMsg) {
+            return $this->error($notFoundMsg, 404);
         });
 
-        $this->renderable(function (NotFoundHttpException $exception, $request) use ($notFound) {
-            return response()->json($notFound, 404);
+        $this->renderable(function (NotFoundHttpException $exception, $request) use ($notFoundMsg) {
+            return $this->error($notFoundMsg, 404);
         });
+
+        $this->renderable(function (MethodNotAllowedHttpException $e, $request) use ($notFoundMsg) {
+            return $this->error($notFoundMsg, 404);
+        });
+
+        $this->renderable(function (ValidationException $e, $request) {
+            return $this->error($e->getMessage(), 422, $e->errors());
+        });
+
     }
 }
