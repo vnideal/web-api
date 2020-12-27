@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Biz\UserBiz;
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Traits\ApiResponser;
+use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Passport;
 
-class AuthController extends Controller
+class AuthController extends ApiController
 {
-    use ApiResponser;
-
     public function __construct(UserBiz $userBiz)
     {
         $this->userBiz = $userBiz;
