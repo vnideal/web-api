@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class UserBiz extends BaseBiz
 {
     const STATUS_UNVERIFIED = 0;
+    const STATUS_VERIFIED = 1;
 
     public function getModel()
     {
@@ -25,7 +26,7 @@ class UserBiz extends BaseBiz
         }
         $attributes['avatar_letter'] = strtoupper($letter);
         $attributes['avatar_color'] = RandomUtil::generateRandomColor();
-        $attributes['status'] = self::STATUS_UNVERIFIED;
+        $attributes['status'] = self::STATUS_VERIFIED;
         $attributes['password'] = Hash::make($attributes['password']);
 
         return $this->create($attributes);
