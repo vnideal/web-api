@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Biz\UserBiz;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\ApiResponser;
@@ -13,6 +14,11 @@ use Laravel\Passport\Passport;
 class AuthController extends Controller
 {
     use ApiResponser;
+
+    public function __construct(UserBiz $userBiz)
+    {
+        $this->userBiz = $userBiz;
+    }
 
     public function login(Request $request)
     {
@@ -29,10 +35,12 @@ class AuthController extends Controller
     {
         $attr = $this->validateSignup($request);
 
-        User::create([
+        $this->userBiz->signup([
+            'first_name' => $attr['first_name'],
+            'last_name' => $attr['last_name'],
             'name' => $attr['name'],
             'email' => $attr['email'],
-            'password' => Hash::make($attr['password']),
+            'password' => $attr['password'],
         ]);
 
         Auth::attempt(['email' => $attr['email'], 'password' => $attr['password']]);
@@ -42,6 +50,7 @@ class AuthController extends Controller
 
     public function user()
     {
+
         return $this->success(Auth::user());
     }
 
@@ -71,6 +80,8 @@ class AuthController extends Controller
     public function validateSignup($request)
     {
         return $request->validate([
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
             'name' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
