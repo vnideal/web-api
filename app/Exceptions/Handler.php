@@ -45,7 +45,7 @@ class Handler extends ExceptionHandler
             return $this->error($notFoundMsg, 404);
         });
 
-        $this->renderable(function (NotFoundHttpException $exception, $request) use ($notFoundMsg) {
+        $this->renderable(function (NotFoundHttpException $e, $request) use ($notFoundMsg) {
             return $this->error($notFoundMsg, 404);
         });
 

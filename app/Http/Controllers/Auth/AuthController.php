@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Biz\UserBiz;
+use App\Classes\Helper\GCSHelper;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Passport;
+use Storage;
 
 class AuthController extends ApiController
 {
@@ -49,6 +51,33 @@ class AuthController extends ApiController
         return $this->success(Auth::user());
     }
 
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $attr = $this->validateUpdate($request);
+        $avatar = null;
+
+        if ($request->hasFile('avatar')) {
+            $disk = Storage::disk('gcs');
+            $avatar = $disk->put('users/images', $request->file('avatar'));
+            $image_remove = $request->input('image_remove');
+            if ($image_remove) {
+                $disk->delete($image_remove);
+            }
+        }
+
+        $userInfo = $this->userBiz->updateUserProfile($user->id, [
+            'first_name' => $attr['first_name'],
+            'last_name' => $attr['last_name'],
+            'name' => $attr['name'],
+            'avatar' => $avatar,
+        ]);
+        $userInfo['avatar'] = GCSHelper::getUrl( $userInfo['avatar']);
+
+        return $this->success($userInfo);
+    }
+
     public function logout()
     {
         Auth::user()->token()->revoke();
@@ -80,6 +109,15 @@ class AuthController extends ApiController
             'name' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+        ]);
+    }
+
+    public function validateUpdate($request)
+    {
+        return $request->validate([
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'name' => 'required|string',
         ]);
     }
 }
