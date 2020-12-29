@@ -31,4 +31,17 @@ class UserBiz extends BaseBiz
 
         return $this->create($attributes);
     }
+
+    public function updateUserProfile($id, $params)
+    {
+        $attributes = ArrayUtil::filter($params, ['first_name', 'last_name', 'name', 'avatar']);
+        $letter = '';
+        if ($attributes['name']) {
+            $letter = $attributes['name'][0];
+        }
+        $attributes['avatar_letter'] = strtoupper($letter);
+        $attributes['avatar_color'] = RandomUtil::generateRandomColor();
+
+        return $this->update($id, $attributes);
+    }
 }
