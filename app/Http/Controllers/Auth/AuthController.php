@@ -62,7 +62,7 @@ class AuthController extends ApiController
         if ($request->hasFile('avatar')) {
             $disk = Storage::disk('gcs');
             $avatar = $disk->put('users/images', $request->file('avatar'));
-            $image_remove =  $user->avatar;
+            $image_remove = $user->avatar;
             if ($image_remove) {
                 $disk->delete($image_remove);
             }
@@ -77,6 +77,23 @@ class AuthController extends ApiController
         $userInfo['avatar'] = GCSHelper::getUrl($userInfo['avatar']);
 
         return $this->success($userInfo);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $attr = $this->validateUpdatePassword($request);
+        $user = Auth::user();
+        $attr['email'] = $user->email;
+        if (!Auth::attempt($attr)) {
+            return $this->error('Credentials mismatch', 401);
+        }
+
+        $this->userBiz->updatePassword($user->id, [
+            'password' => $attr['new_password'],
+        ]);
+
+        $user->token()->revoke();
+        return $this->success(true, 'User Logged Out', 200);
     }
 
     public function logout()
@@ -119,6 +136,14 @@ class AuthController extends ApiController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'name' => 'required|string',
+        ]);
+    }
+
+    public function validateUpdatePassword($request)
+    {
+        return $request->validate([
+            'password' => 'required|string|min:6',
+            'new_password' => 'required|string|min:6',
         ]);
     }
 }
