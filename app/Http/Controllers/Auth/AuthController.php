@@ -61,7 +61,7 @@ class AuthController extends ApiController
         if ($request->hasFile('avatar')) {
             $disk = Storage::disk('gcs');
             $avatar = $disk->put('users/images', $request->file('avatar'));
-            $image_remove = $request->input('image_remove');
+            $image_remove =  $user->avatar;
             if ($image_remove) {
                 $disk->delete($image_remove);
             }
@@ -73,7 +73,7 @@ class AuthController extends ApiController
             'name' => $attr['name'],
             'avatar' => $avatar,
         ]);
-        $userInfo['avatar'] = GCSHelper::getUrl( $userInfo['avatar']);
+        $userInfo['avatar'] = GCSHelper::getUrl($userInfo['avatar']);
 
         return $this->success($userInfo);
     }
