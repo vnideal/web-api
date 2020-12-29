@@ -47,8 +47,9 @@ class AuthController extends ApiController
 
     public function user()
     {
-
-        return $this->success(Auth::user());
+        $userInfo = Auth::user()->toArray();
+        $userInfo['avatar'] = GCSHelper::getUrl($userInfo['avatar']);
+        return $this->success($userInfo);
     }
 
     public function updateProfile(Request $request)

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -50,6 +51,10 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (MethodNotAllowedHttpException $e, $request) use ($notFoundMsg) {
+            return $this->error($notFoundMsg, 404);
+        });
+
+        $this->renderable(function (RouteNotFoundException $e, $request) use ($notFoundMsg) {
             return $this->error($notFoundMsg, 404);
         });
 
