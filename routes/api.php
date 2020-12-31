@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,3 +31,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('profile', [AuthController::class, 'user'])->name('profile');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+Route::resources([
+    'products/categories' => ProductCategoryController::class,
+    'products' => ProductController::class,
+]);

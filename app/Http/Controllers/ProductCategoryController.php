@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Biz\ProductCategoryBiz;
 use Illuminate\Http\Request;
 
-class ProductController extends ApiController
+class ProductCategoryController extends ApiController
 {
+    public function __construct(ProductCategoryBiz $biz)
+    {
+        $this->biz = $biz;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +19,8 @@ class ProductController extends ApiController
      */
     public function index()
     {
-        //
+        $categories = $this->biz->all();
+        return $this->success($categories);
     }
 
     /**
