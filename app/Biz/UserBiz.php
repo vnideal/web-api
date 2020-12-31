@@ -47,8 +47,8 @@ class UserBiz extends BaseBiz
 
     public function updatePassword($id, $params)
     {
-        $attributes = ArrayUtil::filter($params, ['new_password']);
-        $attributes['password'] = Hash::make($attributes['new_password']);
+        $attributes = ArrayUtil::filter($params, ['password']);
+        $attributes['password'] = Hash::make($attributes['password']);
 
         return $this->update($id, $attributes);
     }

@@ -7,6 +7,7 @@ use App\Classes\Helper\GCSHelper;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Passport;
 use Storage;
 
@@ -83,8 +84,9 @@ class AuthController extends ApiController
     {
         $attr = $this->validateUpdatePassword($request);
         $user = Auth::user();
-        $attr['email'] = $user->email;
-        if (!Auth::attempt($attr)) {
+        $currentPassword = $user->password;
+
+        if (!Hash::check($attr['password'], $currentPassword)) {
             return $this->error('Credentials mismatch', 401);
         }
 
