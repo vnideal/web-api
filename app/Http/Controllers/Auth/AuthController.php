@@ -145,7 +145,7 @@ class AuthController extends ApiController
     {
         return $request->validate([
             'password' => 'required|string|min:6',
-            'new_password' => 'required|string|min:6',
+            'new_password' => 'required|string|min:6|confirmed|different:password',
         ]);
     }
 }
