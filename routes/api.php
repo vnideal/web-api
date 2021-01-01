@@ -25,14 +25,18 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('signup', [AuthController::class, 'signup'])->name('signup');
 });
 
+Route::resources([
+    'products/categories' => ProductCategoryController::class,
+    'products/listed' => ProductController::class,
+]);
+
 Route::group(['middleware' => 'auth:api'], function () {
     Route::put('profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::put('profile/password', [AuthController::class, 'updatePassword'])->name('profile.password.update');
     Route::get('profile', [AuthController::class, 'user'])->name('profile');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-});
 
-Route::resources([
-    'products/categories' => ProductCategoryController::class,
-    'products' => ProductController::class,
-]);
+    Route::resources([
+        'products' => ProductController::class,
+    ]);
+});
