@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductListedController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,7 +28,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::resources([
     'products/categories' => ProductCategoryController::class,
-    'products/listed' => ProductController::class,
+    'products/listed' => ProductListedController::class,
 ]);
 
 Route::group(['middleware' => 'auth:api'], function () {
