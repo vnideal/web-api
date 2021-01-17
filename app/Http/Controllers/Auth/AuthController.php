@@ -73,6 +73,9 @@ class AuthController extends ApiController
             'first_name' => $attr['first_name'],
             'last_name' => $attr['last_name'],
             'name' => $attr['name'],
+            'phone' => isset($attr['phone']) ? $attr['phone'] : '',
+            'country' => $attr['country'],
+            'state' => $attr['state'],
             'avatar' => $avatar,
         ]);
         $userInfo['avatar'] = GCSHelper::getUrl($userInfo['avatar']);
@@ -161,6 +164,9 @@ class AuthController extends ApiController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'name' => 'required|string',
+            'phone' => 'nullable|string|max:14',
+            'country' => 'required|string',
+            'state' => 'required|string'
         ]);
     }
 
