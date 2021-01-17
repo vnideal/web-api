@@ -25,6 +25,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::put('profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::put('profile/upload', [AuthController::class, 'updateAvatar'])->name('profile.avatar.upload');
     Route::put('profile/password', [AuthController::class, 'updatePassword'])->name('profile.password.update');
     Route::get('profile', [AuthController::class, 'user'])->name('profile');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
