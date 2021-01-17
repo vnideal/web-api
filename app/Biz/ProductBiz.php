@@ -30,7 +30,17 @@ class ProductBiz extends BaseBiz
             $attributes['status'] = 1;
             $attributes['created_at'] = $startDate;
             $id = DB::table('products')->insertGetId($attributes);
-            $productListedAttributes = ArrayUtil::filter($attributes, ['name', 'image', 'listed_price', 'category_id', 'user_id', 'start_at', 'finish_at', 'status', 'created_at']);
+            $productListedAttributes = ArrayUtil::filter($attributes, [
+                'name',
+                'image',
+                'listed_price',
+                'category_id',
+                'user_id',
+                'start_at',
+                'finish_at',
+                'status',
+                'created_at',
+            ]);
             $productListedAttributes['product_id'] = $id;
             $productListedId = DB::table('products_listed')->insertGetId($productListedAttributes);
 
