@@ -164,7 +164,7 @@ class AuthController extends ApiController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'name' => 'required|string',
-            'phone' => 'string',
+            'phone' => 'nullable|string|max:14',
             'country' => 'required|string',
             'state' => 'required|string'
         ]);
