@@ -45,6 +45,13 @@ class UserBiz extends BaseBiz
         return $this->update($id, $attributes);
     }
 
+    public function updateUserAvatar($id, $params)
+    {
+        $attributes = ArrayUtil::filter($params, ['avatar']);
+
+        return $this->update($id, $attributes);
+    }
+
     public function updatePassword($id, $params)
     {
         $attributes = ArrayUtil::filter($params, ['password']);
