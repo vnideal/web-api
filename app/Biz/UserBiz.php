@@ -34,7 +34,7 @@ class UserBiz extends BaseBiz
 
     public function updateUserProfile($id, $params)
     {
-        $attributes = ArrayUtil::filter($params, ['first_name', 'last_name', 'name', 'avatar']);
+        $attributes = ArrayUtil::filter($params, ['first_name', 'last_name', 'name', 'avatar', 'phone', 'country', 'state']);
         $letter = '';
         if ($attributes['name']) {
             $letter = $attributes['name'][0];
