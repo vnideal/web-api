@@ -22,6 +22,7 @@ class ProductListedBiz extends BaseBiz
     public function getList($params)
     {
         return $this->_model
+            ->with('user')
             ->when($params['keyword'], function ($q, $keyword) {
                 return $q->where('name', 'like', '%' . $keyword . '%');
             })

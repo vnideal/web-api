@@ -99,7 +99,7 @@ class ProductListedController extends ApiController
     {
         return $request->validate([
             'page' => 'integer',
-            'q' => 'string',
+            'q' => 'nullable|string',
         ]);
     }
 }
