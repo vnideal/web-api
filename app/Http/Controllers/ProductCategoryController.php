@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Biz\ProductBiz;
-use App\Classes\Helper\GCSHelper;
+use App\Biz\ProductCategoryBiz;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
-class ProductController extends ApiController
+class ProductCategoryController extends ApiController
 {
-    public function __construct(ProductBiz $biz)
+    public function __construct(ProductCategoryBiz $biz)
     {
         $this->biz = $biz;
     }
@@ -22,9 +19,8 @@ class ProductController extends ApiController
      */
     public function index()
     {
-        $products = $this->biz->all();
-
-        return $this->success($products);
+        $categories = $this->biz->all();
+        return $this->success($categories);
     }
 
     /**
@@ -45,20 +41,7 @@ class ProductController extends ApiController
      */
     public function store(Request $request)
     {
-        $attr = $this->validateStore($request);
-        $user = Auth::user();
-        $attr['user_id'] = $user->id;
-
-        if ($request->hasFile('image')) {
-            $disk = Storage::disk('gcs');
-            $image = $disk->put('products/images', $request->file('image'));
-            $attr['image'] = $image;
-        }
-
-        $product = $this->biz->store($attr);
-        $product['image'] = GCSHelper::getUrl($product['image']);
-
-        return $this->success($product);
+        //
     }
 
     /**
@@ -104,15 +87,5 @@ class ProductController extends ApiController
     public function destroy($id)
     {
         //
-    }
-
-    private function validateStore($request)
-    {
-        return $request->validate([
-            'name' => 'required|string',
-            'image' => 'required|file',
-            'listed_price' => 'required|integer',
-            'category_id' => 'required|integer',
-        ]);
     }
 }

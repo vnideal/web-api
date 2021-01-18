@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Biz\ProductBiz;
-use App\Classes\Helper\GCSHelper;
+use App\Biz\ProductListedBiz;
+use App\Http\Resources\ProductListed as ProductListedResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
-class ProductController extends ApiController
+class ProductListedController extends ApiController
 {
-    public function __construct(ProductBiz $biz)
+
+    public function __construct(ProductListedBiz $biz)
     {
         $this->biz = $biz;
     }
@@ -20,11 +19,14 @@ class ProductController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->biz->all();
+        $attr = $this->validateList($request);
 
-        return $this->success($products);
+        $products = $this->biz->getList(
+            ['keyword' => isset($attr['q']) ? $attr['q'] : null]
+        );
+        return $this->success(new ProductListedResource($products));
     }
 
     /**
@@ -45,20 +47,7 @@ class ProductController extends ApiController
      */
     public function store(Request $request)
     {
-        $attr = $this->validateStore($request);
-        $user = Auth::user();
-        $attr['user_id'] = $user->id;
-
-        if ($request->hasFile('image')) {
-            $disk = Storage::disk('gcs');
-            $image = $disk->put('products/images', $request->file('image'));
-            $attr['image'] = $image;
-        }
-
-        $product = $this->biz->store($attr);
-        $product['image'] = GCSHelper::getUrl($product['image']);
-
-        return $this->success($product);
+        //
     }
 
     /**
@@ -106,13 +95,11 @@ class ProductController extends ApiController
         //
     }
 
-    private function validateStore($request)
+    private function validateList($request)
     {
         return $request->validate([
-            'name' => 'required|string',
-            'image' => 'required|file',
-            'listed_price' => 'required|integer',
-            'category_id' => 'required|integer',
+            'page' => 'integer',
+            'q' => 'string',
         ]);
     }
 }
