@@ -73,6 +73,32 @@ class AuthController extends ApiController
             'first_name' => $attr['first_name'],
             'last_name' => $attr['last_name'],
             'name' => $attr['name'],
+            'phone' => isset($attr['phone']) ? $attr['phone'] : '',
+            'country' => $attr['country'],
+            'state' => $attr['state'],
+            'avatar' => $avatar,
+        ]);
+        $userInfo['avatar'] = GCSHelper::getUrl($userInfo['avatar']);
+
+        return $this->success($userInfo);
+    }
+
+    public function updateAvatar(Request $request) {
+        $user = Auth::user();
+
+        $attr = $this->validateUpdateAvatar($request);
+        $avatar = null;
+
+        if ($request->hasFile('avatar')) {
+            $disk = Storage::disk('gcs');
+            $avatar = $disk->put('users/images', $request->file('avatar'));
+            $image_remove = $user->avatar;
+            if ($image_remove) {
+                $disk->delete($image_remove);
+            }
+        }
+
+        $userInfo = $this->userBiz->updateUserAvatar($user->id, [
             'avatar' => $avatar,
         ]);
         $userInfo['avatar'] = GCSHelper::getUrl($userInfo['avatar']);
@@ -138,6 +164,9 @@ class AuthController extends ApiController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'name' => 'required|string',
+            'phone' => 'nullable|string|max:14',
+            'country' => 'required|string',
+            'state' => 'required|string'
         ]);
     }
 
@@ -146,6 +175,13 @@ class AuthController extends ApiController
         return $request->validate([
             'password' => 'required|string|min:6',
             'new_password' => 'required|string|min:6|confirmed|different:password',
+        ]);
+    }
+
+    public function validateUpdateAvatar($request)
+    {
+        return $request->validate([
+            'avatar' => 'required|file'
         ]);
     }
 }

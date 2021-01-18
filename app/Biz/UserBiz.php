@@ -34,13 +34,20 @@ class UserBiz extends BaseBiz
 
     public function updateUserProfile($id, $params)
     {
-        $attributes = ArrayUtil::filter($params, ['first_name', 'last_name', 'name', 'avatar']);
+        $attributes = ArrayUtil::filter($params, ['first_name', 'last_name', 'name', 'avatar', 'phone', 'country', 'state']);
         $letter = '';
         if ($attributes['name']) {
             $letter = $attributes['name'][0];
         }
         $attributes['avatar_letter'] = strtoupper($letter);
         $attributes['avatar_color'] = RandomUtil::generateRandomColor();
+
+        return $this->update($id, $attributes);
+    }
+
+    public function updateUserAvatar($id, $params)
+    {
+        $attributes = ArrayUtil::filter($params, ['avatar']);
 
         return $this->update($id, $attributes);
     }
